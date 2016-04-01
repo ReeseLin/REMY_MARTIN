@@ -28,10 +28,12 @@ import lb.cn.so.MainConfig.SettingFile;
 import lb.cn.so.Thread.SubmitQueryMsgThread;
 import lb.cn.so.Utils.ThreadPool;
 import lb.cn.so.adapter.ChatroomAdapter;
+import lb.cn.so.bean.ApplyJoinUser;
 import lb.cn.so.bean.Chatroom;
 import lb.cn.so.bean.QueryMsg;
 import lb.cn.so.service.ChatroomService;
 import lb.cn.so.service.RequestJoinRoomService;
+import lb.cn.so.service.RequestJoinUserService;
 
 /**
  * Creater :ReeseLin
@@ -45,7 +47,9 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     private TextView usernameTextView;
     private Button createRoomButtom;
     private Button applyRoomButtom;
+    private Button messageButtom;
     private ListView chatroomsListView;
+
 
     //等待的对话框
     private ProgressDialog centerProgressDialog;
@@ -71,6 +75,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     //与数据库交互的service
     private ChatroomService chatroomService = new ChatroomService(this);
     private RequestJoinRoomService requestJoinRoomService = new RequestJoinRoomService(this);
+    private RequestJoinUserService requestJoinUserService = new RequestJoinUserService(this);
 
     //标志的what
     public static final int createRoom_what = 2;
@@ -102,8 +107,8 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         usernameTextView = (TextView) findViewById(R.id.showUserNameTextView);
         createRoomButtom = (Button) findViewById(R.id.createRoomButtom);
         applyRoomButtom = (Button) findViewById(R.id.applyRoomButtom);
-        chatroomsListView = (ListView) this.findViewById(R.id.chatRoomListView);
-
+        chatroomsListView = (ListView) findViewById(R.id.chatRoomListView);
+        messageButtom = (Button) findViewById(R.id.messageButtom);
         //显示Username
         usernameTextView.setText(MainUser.username);
 
@@ -112,6 +117,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         //创建两个按键的监听事件
         createRoomButtom.setOnClickListener(this);
         applyRoomButtom.setOnClickListener(this);
+        messageButtom.setOnClickListener(this);
 
         //开线程刷新ListView
         myTimeTask = new MyTimeTask(myHandler);
@@ -162,6 +168,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
                 centerDialog = new AlertDialog.Builder(this).setTitle("输入申请聊天室ID：").setView(createRoomName).
                         setPositiveButton("确定", new applyRoomListen()).
                         setNegativeButton("取消", null).show();
+                break;
+            case R.id.messageButtom:
+                Intent intent = new Intent(CenterActivity.this, MessageActivity.class);//激活组件,显示意图:明确指定了组件名称的意图叫显示意图
+                startActivity(intent);
                 break;
         }
     }
@@ -232,12 +242,23 @@ public class CenterActivity extends Activity implements View.OnClickListener {
                     break;
                 case showTime_what:
                     show();
+                    showMessage();
                     break;
                 case applyRoom_what:
                     applyRoom(msg);
                     break;
             }
             super.handleMessage(msg);
+        }
+
+        private void showMessage() {
+            List<ApplyJoinUser> applyJoinUsers = requestJoinUserService.getJoinUsers();
+            int applyCount = applyJoinUsers.size();
+            if (applyCount > 0) {
+                messageButtom.setVisibility(View.VISIBLE);
+            }else{
+                messageButtom.setVisibility(View.GONE);
+            }
         }
 
         /**
@@ -271,10 +292,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
             QueryMsg qm = (QueryMsg) bata.getSerializable(SubmitQueryMsgThread.RESPONSE_MSG);
 
             if ("0".equals(qm.getResult())) {
-                List<Map<String, Object>> returnMsg= qm.getDataTable();
+                List<Map<String, Object>> returnMsg = qm.getDataTable();
                 Map<String, Object> returnMap = returnMsg.get(0);
-                String returnUserName= (String)returnMap.get("applyroomname");
-                String chatroomid= (String)returnMap.get("applyroomid");
+                String returnUserName = (String) returnMap.get("applyroomname");
+                String chatroomid = (String) returnMap.get("applyroomid");
 
                 centerProgressDialog.dismiss();
                 //TODO 这里缺少了聊天室的名字

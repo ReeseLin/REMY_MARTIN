@@ -9,4 +9,8 @@
     <string name="message">消息</string>
     <string name="commit">发送</string>
     <string name="chatActivity">聊天Activity</string>
+    <string name="messageActivity">消息通知activity</string>
+    <string name="requester">申请者</string>
+    <string name="ID">ID</string>
+    <string name="chatroomID">聊天室ID</string>
 </resources>

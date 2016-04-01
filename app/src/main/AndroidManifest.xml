@@ -28,6 +28,11 @@
             android:windowSoftInputMode="adjustUnspecified|stateHidden"
             ></activity>
 
+        <activity
+            android:name=".MessageActivity"
+            android:label="@string/messageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+
         <service android:name=".MainService"></service>
     </application>
     <!-- 访问internet权限 -->
