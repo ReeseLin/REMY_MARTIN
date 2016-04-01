@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SO</string>
+    <string name="submitButtom">确认</string>
+    <string name="username">用户名为：</string>
+    <string name="userid">用户id：</string>
+    <string name="centerActivity">中央activity</string>
+    <string name="create">创建</string>
+    <string name="join">加入</string>
+    <string name="message">消息</string>
+    <string name="commit">发送</string>
+    <string name="chatActivity">聊天Activity</string>
+</resources>

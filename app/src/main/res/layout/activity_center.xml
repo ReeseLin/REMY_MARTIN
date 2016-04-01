@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="lb.cn.so.CenterActivity">
+
+    <RelativeLayout
+        android:id="@+id/topRelativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/topTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/username"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/showUserNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/topTextView"
+            android:textSize="25dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listViewRelativeLayout"
+        android:layout_below="@id/topRelativeLayout"
+        android:background="@drawable/sss"
+        >
+        <LinearLayout
+            android:id="@+id/listViewLinear"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            >
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:text="聊天室"
+                />
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:layout_marginLeft="20dp"
+                android:text="聊天室id"
+                />
+        </LinearLayout>
+
+        <ListView
+            android:layout_below="@id/listViewLinear"
+            android:id="@+id/chatRoomListView"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:numColumns="4"></ListView>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="115dp"
+        android:layout_below="@id/listViewRelativeLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:id="@+id/createRoomButtom"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            android:text="@string/create" />
+
+        <Button
+            android:id="@+id/applyRoomButtom"
+            android:layout_marginLeft="20dp"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:text="@string/join" />
+
+        <Button
+            android:visibility="gone"
+            android:background="@drawable/button"
+            android:id="@+id/messageButtom"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
