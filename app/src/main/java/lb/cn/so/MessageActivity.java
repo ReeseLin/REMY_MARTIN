@@ -57,7 +57,7 @@ public class MessageActivity extends Activity {
             ListView lView = (ListView) parent;
             /* 自定义适配器*/
             ApplyJoinUser applyJoinUser = (ApplyJoinUser) lView.getItemAtPosition(position);
-            String showMsg = "确定让ID：" + applyJoinUser.getRequesterid() + "加入房间：" + applyJoinUser.getRequestroomid() + "吗？";
+            String showMsg = "允许：" + applyJoinUser.getRequestername() + "加入房间" + applyJoinUser.getRequestroomid() + "吗？";
             centerDialog = new AlertDialog.Builder(MessageActivity.this).setTitle(showMsg).
                     setPositiveButton("确定", new agreeUserJoin(applyJoinUser)).
                     setNegativeButton("取消", null).show();

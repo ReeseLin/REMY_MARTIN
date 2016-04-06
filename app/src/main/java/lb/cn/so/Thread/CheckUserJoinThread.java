@@ -42,7 +42,7 @@ public class CheckUserJoinThread implements Runnable {
         List<Map<String, Object>> datatable = qm.getDataTable();
         for(Map<String, Object> Applyer:datatable){
             ApplyJoinUser applyJoinUser = new ApplyJoinUser
-                    ((String)Applyer.get("userid"),(String)Applyer.get("chatroomid"),null);
+                    ((String)Applyer.get("userid"),(String)Applyer.get("chatroomid"),(String)Applyer.get("username"));
             if(requestJoinUserService.isAlreadyApply(applyJoinUser)){
                 requestJoinUserService.saveJoinUser(applyJoinUser);
             }

@@ -30,9 +30,9 @@ public class MainService extends Service {
 
         CheckUserJoinThread checkUserJoinThread = new CheckUserJoinThread(MainService.this);
 
-        ThreadPool.serviceThreadPool.scheduleWithFixedDelay(chackBeAgreeThread, 0, 15, TimeUnit.SECONDS);
+        ThreadPool.serviceThreadPool.scheduleWithFixedDelay(chackBeAgreeThread, 0, 5, TimeUnit.SECONDS);
 
-        ThreadPool.serviceThreadPool.scheduleWithFixedDelay(checkUserJoinThread, 0, 15, TimeUnit.SECONDS);
+        ThreadPool.serviceThreadPool.scheduleWithFixedDelay(checkUserJoinThread, 0, 5, TimeUnit.SECONDS);
 
         return super.onStartCommand(intent, flags, startId);
     }

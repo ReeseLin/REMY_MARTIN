@@ -69,7 +69,6 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     private List<Chatroom> chatrooms = new ArrayList<Chatroom>();
     private List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
     public static Long dataCount;
-    private SimpleAdapter simpleAdapter;
     private ChatroomAdapter chatroomAdapter;
 
     //与数据库交互的service
@@ -196,6 +195,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
             queryMsg.iniDateTable();
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("userid", MainUser.userid);
+            map.put("username", MainUser.username);
             map.put("chatroomname", chatroomname);
             queryMsg.getDataTable().add(map);
             return queryMsg;

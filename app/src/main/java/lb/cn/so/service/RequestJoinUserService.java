@@ -21,8 +21,8 @@ public class RequestJoinUserService {
 
     public void saveJoinUser(ApplyJoinUser applyJoinUser) {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
-        sqLiteDatabase.execSQL("insert into request_join_user(requesterid,requestroomid) values(?,?)",
-                new Object[]{applyJoinUser.getRequesterid(), applyJoinUser.getRequestroomid()});
+        sqLiteDatabase.execSQL("insert into request_join_user(requesterid,requestroomid,requestername) values(?,?,?)",
+                new Object[]{applyJoinUser.getRequesterid(), applyJoinUser.getRequestroomid(),applyJoinUser.getRequestername()});
     }
 
     public List<ApplyJoinUser> getJoinUsers() {
@@ -32,8 +32,8 @@ public class RequestJoinUserService {
         while (cursor.moveToNext()) {
             String requesterid = cursor.getString(cursor.getColumnIndex("requesterid"));
             String requestroomid = cursor.getString(cursor.getColumnIndex("requestroomid"));
-            //String requestername = cursor.getString(cursor.getColumnIndex("requestername"));
-            ApplyJoinUser applyJoinUser = new ApplyJoinUser(requesterid,requestroomid,null);
+            String requestername = cursor.getString(cursor.getColumnIndex("requestername"));
+            ApplyJoinUser applyJoinUser = new ApplyJoinUser(requesterid,requestroomid,requestername);
             ApplyJoinUsers.add(applyJoinUser);
         }
         cursor.close();
