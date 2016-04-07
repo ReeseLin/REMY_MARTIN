@@ -44,7 +44,7 @@ public class MessageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
-        myHandler= new MyHandler();
+        myHandler = new MyHandler();
         showMessageListView = (ListView) findViewById(R.id.showMessageListView);
         List<ApplyJoinUser> applyJoinUsers = requestJoinUserService.getJoinUsers();
         ApplyJoinAdapter applyJoinAdapter = new ApplyJoinAdapter(this, applyJoinUsers, R.layout.message_item);
@@ -69,6 +69,7 @@ public class MessageActivity extends Activity {
      */
     class agreeUserJoin implements DialogInterface.OnClickListener {
         ApplyJoinUser applyJoinUser;
+
         public agreeUserJoin(ApplyJoinUser applyJoinUser) {
             this.applyJoinUser = applyJoinUser;
         }
@@ -95,7 +96,7 @@ public class MessageActivity extends Activity {
         }
     }
 
-    class MyHandler extends Handler{
+    class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -113,6 +114,11 @@ public class MessageActivity extends Activity {
             QueryMsg qm = (QueryMsg) bata.getSerializable(SubmitQueryMsgThread.RESPONSE_MSG);
             if ("0".equals(qm.getResult())) {
                 //TODO 在这里删除掉申请加入聊天室的表的信息
+                List<Map<String, Object>> resultList = qm.getDataTable();
+                Map<String, Object> result = resultList.get(0);
+                String friendid = (String) result.get("friendid");
+                String chatroomid = (String) result.get("chatroomid");
+                requestJoinUserService.delete(new ApplyJoinUser(friendid,chatroomid,null));
             }
         }
     }
