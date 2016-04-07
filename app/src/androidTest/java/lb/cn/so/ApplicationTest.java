@@ -14,13 +14,17 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import lb.cn.so.Utils.DBOpenHelper;
 import lb.cn.so.bean.ApplyJoinUser;
 import lb.cn.so.bean.Chatroom;
+import lb.cn.so.bean.ChatroomMessage;
 import lb.cn.so.service.ChatroomService;
+import lb.cn.so.service.MessageService;
 import lb.cn.so.service.RequestJoinRoomService;
 import lb.cn.so.service.RequestJoinUserService;
 
@@ -115,4 +119,20 @@ public class ApplicationTest extends AndroidTestCase {
         ApplyJoinUser applyJoinUser = new ApplyJoinUser("135", "44", null);
         requestJoinUserService.isAlreadyApply(applyJoinUser);
     }
+
+    public void testSaveMessage() throws Exception {
+        MessageService messageService=new MessageService(getContext());
+        Date date =  new Date();
+        ChatroomMessage cm = new ChatroomMessage("22","testMessage","999",date,"lin","0");
+        messageService.saveChatroomMessage(cm);
+    }
+
+    public void testGetMessage() throws Exception {
+        MessageService messageService=new MessageService(getContext());
+        List<ChatroomMessage> resultList = messageService.getScrollMessageData(22,0,10);
+        List<ChatroomMessage> resultList1 = messageService.getScrollMessageData(22,0,10);
+        List<ChatroomMessage> resultList2 = messageService.getScrollMessageData(22,0,10);
+
+    }
+
 }

@@ -24,8 +24,12 @@ import lb.cn.so.adapter.ApplyJoinAdapter;
 import lb.cn.so.bean.ApplyJoinUser;
 import lb.cn.so.bean.QueryMsg;
 import lb.cn.so.service.RequestJoinUserService;
-
-
+/**
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/7
+ *  Des：消息界面，确认好友加入
+ */
 public class MessageActivity extends Activity {
 
     private RequestJoinUserService requestJoinUserService = new RequestJoinUserService(this);
@@ -113,7 +117,6 @@ public class MessageActivity extends Activity {
             //获得数据
             QueryMsg qm = (QueryMsg) bata.getSerializable(SubmitQueryMsgThread.RESPONSE_MSG);
             if ("0".equals(qm.getResult())) {
-                //TODO 在这里删除掉申请加入聊天室的表的信息
                 List<Map<String, Object>> resultList = qm.getDataTable();
                 Map<String, Object> result = resultList.get(0);
                 String friendid = (String) result.get("friendid");
