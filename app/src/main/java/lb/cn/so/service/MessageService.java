@@ -40,7 +40,7 @@ public class MessageService {
     }
 
 
-    public List<ChatroomMessage> getScrollMessageData(int chatroomid, int offset, int maxResult) throws Exception {
+    public List<ChatroomMessage> getScrollMessageData(int chatroomid, int offset, int maxResult){
         List<ChatroomMessage> chatroomMessages = new ArrayList<ChatroomMessage>();
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from chat_room_message where chatroomid =? order by createtime ASC limit ?,?",
@@ -53,7 +53,13 @@ public class MessageService {
             String isread = cursor.getString(cursor.getColumnIndex("isread"));
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date createtime = format.parse(time);
+
+            Date createtime = null;
+            try {
+                createtime = format.parse(time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             ChatroomMessage cm = new ChatroomMessage(chatroomid + "", message, senderid + "",
                     createtime, sendername, isread);

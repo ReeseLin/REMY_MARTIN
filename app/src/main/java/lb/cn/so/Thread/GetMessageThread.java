@@ -35,6 +35,9 @@ public class GetMessageThread implements Runnable {
 
     private void getMessage() throws Exception {
         String lasttime = messageService.getLastTimeString();
+        if(lasttime==null){
+            lasttime="2016-04-09 15:15:15";
+        }
         QueryMsg queryMsg = new QueryMsg();
         queryMsg.setMethodName("GetChatRoomMsg");
         queryMsg.iniDateTable();

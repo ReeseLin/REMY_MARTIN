@@ -9,21 +9,25 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import lb.cn.so.MainConfig.MainUser;
 import lb.cn.so.MainConfig.SettingFile;
 import lb.cn.so.Thread.SubmitQueryMsgThread;
 import lb.cn.so.Utils.ThreadPool;
+import lb.cn.so.adapter.ChatMessageAdapter;
 import lb.cn.so.bean.ChatroomMessage;
 import lb.cn.so.bean.QueryMsg;
 import lb.cn.so.service.MessageService;
@@ -37,13 +41,34 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     private TextView chatroomnameTV;
     private EditText sendMessageET;
     private Button commitBut;
+    private ListView chatMessageListView;
 
     private String chatroomname;
     private String chatroomid;
 
     private MyHandler myhandler;
 
+    private ChatMessageAdapter chatMessageAdapter;
+    private List<ChatroomMessage> messages = new ArrayList<ChatroomMessage>();
+
     public static final int applyRoom_what = 7;
+
+    public static final int chat_showTime_what = 8;
+
+    MyTimeTask myTimeTask;
+
+    private class MyTimeTask extends TimerTask {
+        Handler handler;
+
+        public MyTimeTask(Handler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        public void run() {
+            handler.sendEmptyMessage(chat_showTime_what);
+        }
+    }
 
     private MessageService messageService = new MessageService(this);
 
@@ -56,6 +81,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         chatroomnameTV = (TextView) findViewById(R.id.chatroomname);
         sendMessageET = (EditText) findViewById(R.id.contentEditText);
         commitBut = (Button) findViewById(R.id.commitButton);
+        chatMessageListView = (ListView) findViewById(R.id.chatMessageListView);
 
         myhandler = new MyHandler();
 
@@ -66,18 +92,24 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         chatroomname = bundle.getString("chatroomname");
         chatroomid = bundle.getString("chatroomid");
 
-//        commitBut.requestFocus();chatroomname
-
         commitBut.setOnClickListener(this);
 
         chatroomidTV.setText("ID:" + chatroomid);
         chatroomnameTV.setText("" + chatroomname);
 
+        myTimeTask = new MyTimeTask(myhandler);
+        ThreadPool.timeThreadPool.scheduleWithFixedDelay(myTimeTask, 0, 3, TimeUnit.SECONDS);
+
+        chatMessageAdapter = new ChatMessageAdapter(this,messages,R.layout.chatmessage_item);
+        chatMessageListView.setAdapter(chatMessageAdapter);
         show();
     }
 
     private void show() {
-        //显示 listView内容
+        int chatroomidint = Integer.parseInt(chatroomid);
+        messages = messageService.getScrollMessageData(chatroomidint,0,100);
+        chatMessageAdapter.refresh(messages);
+
     }
 
     //自定义handler，只是一个定时的功能去调用show()方法
@@ -87,6 +119,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             switch (msg.what) {
                 case applyRoom_what:
                     checkSendResult(msg);
+                    show();
+                    break;
+                case chat_showTime_what:
+                    show();
                     break;
             }
             super.handleMessage(msg);
@@ -100,24 +136,24 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 //保存到数据库
                 List<Map<String, Object>> datatable = qm.getDataTable();
                 Map<String, Object> dataMap = datatable.get(0);
-                String chatroomid =(String) dataMap.get("chatroomid");
-                String message =(String) dataMap.get("message");
-                String time =(String) dataMap.get("createtime");
+                String chatroomid = (String) dataMap.get("chatroomid");
+                String message = (String) dataMap.get("message");
+                String time = (String) dataMap.get("createtime");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 Date createtime = null;
                 try {
                     createtime = format.parse(time);
                 } catch (ParseException e) {
-                    Toast.makeText(ChatActivity.this,"解析日期出错",Toast.LENGTH_LONG);
+                    Toast.makeText(ChatActivity.this, "解析日期出错", Toast.LENGTH_LONG);
                 }
 
                 ChatroomMessage cm = new ChatroomMessage(chatroomid,
-                        message,MainUser.userid,createtime,MainUser.username,"1");
+                        message, MainUser.userid, createtime, MainUser.username, "1");
 
                 messageService.saveChatroomMessage(cm);
 
-                Toast.makeText(ChatActivity.this,"发送成功",Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -126,7 +162,6 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.commitButton:
-                //执行 SendChatRoomMsg操作
                 sendMessage();
                 break;
         }
@@ -142,6 +177,7 @@ public class ChatActivity extends Activity implements View.OnClickListener {
     @NonNull
     private QueryMsg assembleQueryMsg() {
         String message = sendMessageET.getText().toString();
+        sendMessageET.setText("");
         QueryMsg queryMsg = new QueryMsg();
         queryMsg.setMethodName("SendChatRoomMsg");
         queryMsg.iniDateTable();

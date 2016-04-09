@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
 
     //标志的what
     public static final int createRoom_what = 2;
-    public static final int showTime_what = 3;
+    public static final int center_showTime_what = 3;
     public static final int applyRoom_what = 4;
 
     //定时的一个类，用来主要功能是刷新ListView，TODO 后续应该要改掉
@@ -93,7 +92,8 @@ public class CenterActivity extends Activity implements View.OnClickListener {
 
         @Override
         public void run() {
-            handler.sendEmptyMessage(showTime_what);
+            handler.sendEmptyMessage(center_showTime_what);
+            handler.sendEmptyMessage(center_showTime_what);
         }
     }
 
@@ -240,7 +240,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
                     createRoom(msg);
                     show();
                     break;
-                case showTime_what:
+                case center_showTime_what:
                     show();
                     showMessage();
                     break;
