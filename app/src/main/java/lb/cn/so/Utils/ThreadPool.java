@@ -11,8 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class ThreadPool {
     //这个池现在是给用在Main和Center这两个界面对于http请求的线程方法中
-    public static ScheduledExecutorService timeThreadPool = Executors.newScheduledThreadPool(10);
+    public static ScheduledExecutorService timeThreadPool = Executors.newScheduledThreadPool(20);
 
     //Service操作的线程池
-    public static ScheduledExecutorService serviceThreadPool = Executors.newScheduledThreadPool(10);
+    public static ScheduledExecutorService serviceThreadPool = Executors.newScheduledThreadPool(20);
 }

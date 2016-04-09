@@ -132,7 +132,12 @@ public class ApplicationTest extends AndroidTestCase {
         List<ChatroomMessage> resultList = messageService.getScrollMessageData(22,0,10);
         List<ChatroomMessage> resultList1 = messageService.getScrollMessageData(22,0,10);
         List<ChatroomMessage> resultList2 = messageService.getScrollMessageData(22,0,10);
+    }
 
+
+    public void testGetMessageLastTime() throws Exception {
+        MessageService messageService=new MessageService(getContext());
+        messageService.getLastTime();
     }
 
 }

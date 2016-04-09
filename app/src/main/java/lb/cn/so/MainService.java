@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import lb.cn.so.Thread.ChackBeAgreeThread;
 import lb.cn.so.Thread.CheckUserJoinThread;
+import lb.cn.so.Thread.GetMessageThread;
 import lb.cn.so.Utils.ThreadPool;
 
 /**
@@ -30,9 +31,13 @@ public class MainService extends Service {
 
         CheckUserJoinThread checkUserJoinThread = new CheckUserJoinThread(MainService.this);
 
+        GetMessageThread getMessageThread = new GetMessageThread(MainService.this);
+
         ThreadPool.serviceThreadPool.scheduleWithFixedDelay(chackBeAgreeThread, 0, 5, TimeUnit.SECONDS);
 
         ThreadPool.serviceThreadPool.scheduleWithFixedDelay(checkUserJoinThread, 0, 5, TimeUnit.SECONDS);
+
+        ThreadPool.serviceThreadPool.scheduleWithFixedDelay(getMessageThread, 0, 5, TimeUnit.SECONDS);
 
         return super.onStartCommand(intent, flags, startId);
     }

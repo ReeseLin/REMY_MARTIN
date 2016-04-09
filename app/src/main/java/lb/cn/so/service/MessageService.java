@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import lb.cn.so.MainConfig.MainUser;
 import lb.cn.so.Utils.DBOpenHelper;
 import lb.cn.so.bean.Chatroom;
 import lb.cn.so.bean.ChatroomMessage;
@@ -32,22 +33,20 @@ public class MessageService {
     public void saveChatroomMessage(ChatroomMessage chatroomMessage) {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String createtime =format.format(chatroomMessage.getCreatetime());
+        String createtime = format.format(chatroomMessage.getCreatetime());
         sqLiteDatabase.execSQL("insert into chat_room_message(chatroomid ,message ,createtime ,sendername ,senderid ,isread ) values(?,?,?,?,?,?)",
-                new Object[]{chatroomMessage.getChatroomid(), chatroomMessage.getMessage(),createtime,
+                new Object[]{chatroomMessage.getChatroomid(), chatroomMessage.getMessage(), createtime,
                         chatroomMessage.getSendername(), chatroomMessage.getSenderid(), chatroomMessage.getIsread()});
     }
 
 
-    public List<ChatroomMessage> getScrollMessageData(int chatroomid ,int offset, int maxResult) throws Exception {
+    public List<ChatroomMessage> getScrollMessageData(int chatroomid, int offset, int maxResult) throws Exception {
         List<ChatroomMessage> chatroomMessages = new ArrayList<ChatroomMessage>();
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from chat_room_message where chatroomid =? order by createtime ASC limit ?,?",
-                new String[]{String.valueOf(chatroomid),String.valueOf(offset), String.valueOf(maxResult)});
+                new String[]{String.valueOf(chatroomid), String.valueOf(offset), String.valueOf(maxResult)});
         while (cursor.moveToNext()) {
-            //int chatroomid = cursor.getInt(cursor.getColumnIndex("chatroomid"));
             int senderid = cursor.getInt(cursor.getColumnIndex("senderid"));
-
             String message = cursor.getString(cursor.getColumnIndex("message"));
             String time = cursor.getString(cursor.getColumnIndex("createtime"));
             String sendername = cursor.getString(cursor.getColumnIndex("sendername"));
@@ -65,5 +64,14 @@ public class MessageService {
         return chatroomMessages;
     }
 
+
+    public String getLastTimeString() {
+        SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT MAX(createtime) AS lasttime FROM  chat_room_message where senderid != ?;", new String[]{MainUser.userid});
+        cursor.moveToFirst();
+        String time = cursor.getString(0);
+        cursor.close();
+        return time;
+    }
 
 }
