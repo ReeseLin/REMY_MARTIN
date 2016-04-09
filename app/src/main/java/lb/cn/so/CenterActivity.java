@@ -38,9 +38,12 @@ import lb.cn.so.service.RequestJoinUserService;
  * Creater :ReeseLin
  * Email:172053362@qq.com
  * Date:2016/3/29
- * Des：中心界面，在自动登录或注册好用户后的主要界面
+ * Des：中心界面，在注册后或者自动登录后跳转的界面
  */
 public class CenterActivity extends Activity implements View.OnClickListener {
+
+    private String chatroomid;
+    private String chatroomname;
 
     //几个小小的UI控件
     private TextView usernameTextView;
@@ -48,7 +51,6 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     private Button applyRoomButtom;
     private Button messageButtom;
     private ListView chatroomsListView;
-
 
     //等待的对话框
     private ProgressDialog centerProgressDialog;
@@ -60,15 +62,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     //线程交互的handler
     private MyHandler myHandler;
 
-    private String chatroomid;
-    private String chatroomname;
-
-
-    //ListView使用的一些
-    private List<Chatroom> chatrooms = new ArrayList<Chatroom>();
-    private List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
-    public static Long dataCount;
+    //ListView显示的一些参数
     private ChatroomAdapter chatroomAdapter;
+    private List<Chatroom> chatrooms = new ArrayList<Chatroom>();
+    public static Long dataCount;
 
     //与数据库交互的service
     private ChatroomService chatroomService = new ChatroomService(this);
@@ -80,23 +77,8 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     public static final int center_showTime_what = 3;
     public static final int applyRoom_what = 4;
 
-    //定时的一个类，用来主要功能是刷新ListView，TODO 后续应该要改掉
+    //定时的一个类，用来主要功能是刷新ListView，TODO 可以的话要优化
     MyTimeTask myTimeTask;
-
-    private class MyTimeTask extends TimerTask {
-        Handler handler;
-
-        public MyTimeTask(Handler handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        public void run() {
-            handler.sendEmptyMessage(center_showTime_what);
-            handler.sendEmptyMessage(center_showTime_what);
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,20 +102,24 @@ public class CenterActivity extends Activity implements View.OnClickListener {
 
         //开线程刷新ListView
         myTimeTask = new MyTimeTask(myHandler);
-        ThreadPool.timeThreadPool.scheduleWithFixedDelay(myTimeTask, 0, 15, TimeUnit.SECONDS);
+        ThreadPool.timeThreadPool.scheduleWithFixedDelay(myTimeTask, 0, 5, TimeUnit.SECONDS);
 
-        //分配的一个适配器给ListView TODO 这个必须改为自己的适配器
-
-        chatroomAdapter = new ChatroomAdapter(this, chatrooms, R.layout.chatroomitem);
-        chatroomsListView.setOnItemClickListener(new ItemClickListener());
+        //分配的一个适配器给ListView
+        chatroomAdapter = new ChatroomAdapter(this, chatrooms, R.layout.chatroom_item);
         chatroomsListView.setAdapter(chatroomAdapter);
+
+        //为listView中的每个item设置点击事件
+        chatroomsListView.setOnItemClickListener(new ItemClickListener());
     }
 
-
+    /**
+     * item点击事件
+     * 在点击ListView中的item的时候，跳转到ChatActivity(聊天界面上)
+     * 同时携带的数据是聊天室的ID和聊天室的名字
+     */
     private final class ItemClickListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             ListView lView = (ListView) parent;
-            /* 自定义适配器*/
             Chatroom chatroom = (Chatroom) lView.getItemAtPosition(position);
             Intent intent = new Intent(CenterActivity.this, ChatActivity.class);//激活组件,显示意图:明确指定了组件名称的意图叫显示意图
             Bundle bundle = new Bundle();
@@ -144,7 +130,9 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         }
     }
 
-
+    /**
+     * 动态刷新ListView时调用
+     */
     private void show() {
         if (dataCount != chatroomService.getChatRoomCount()) {
             dataCount = chatroomService.getChatRoomCount();
@@ -153,6 +141,24 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    /**
+     * 通过发送空的一个消息去触发MyHandler执行刷新动作
+     */
+    private class MyTimeTask extends TimerTask {
+        Handler handler;
+        public MyTimeTask(Handler handler) {
+            this.handler = handler;
+        }
+        @Override
+        public void run() {
+            handler.sendEmptyMessage(center_showTime_what);
+        }
+    }
+
+    /**
+     * 界面的点击事件
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -169,14 +175,14 @@ public class CenterActivity extends Activity implements View.OnClickListener {
                         setNegativeButton("取消", null).show();
                 break;
             case R.id.messageButtom:
-                Intent intent = new Intent(CenterActivity.this, MessageActivity.class);//激活组件,显示意图:明确指定了组件名称的意图叫显示意图
+                Intent intent = new Intent(CenterActivity.this, MessageActivity.class);
                 startActivity(intent);
                 break;
         }
     }
 
     /**
-     * 创建聊天室的监听类
+     * Dialog点击监听类，用来创建聊天室
      */
     class createRoomListen implements DialogInterface.OnClickListener {
         @Override
@@ -188,6 +194,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
             centerProgressDialog = ProgressDialog.show(CenterActivity.this, null, "正在创建......", true);
         }
 
+        /**
+         * 组装请求(CreateChatRoom方法)
+         * @return
+         */
         private QueryMsg assembleCreateRoomQuery() {
             chatroomname = createRoomName.getText().toString();
             QueryMsg queryMsg = new QueryMsg();
@@ -203,7 +213,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 申请加入聊天室的类
+     * Dialog点击监听类，用来申请加入聊天室
      */
     class applyRoomListen implements DialogInterface.OnClickListener {
         @Override
@@ -216,6 +226,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
             centerProgressDialog = ProgressDialog.show(CenterActivity.this, null, "正在申请......", true);
         }
 
+        /**
+         * 组装请求(ApplyJoinChatRoom方法)
+         * @return
+         */
         private QueryMsg assembleApplyRoomQuery() {
             chatroomid = createRoomName.getText().toString();
             QueryMsg queryMsg = new QueryMsg();
@@ -242,7 +256,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
                     break;
                 case center_showTime_what:
                     show();
-                    showMessage();
+                    showMessageButton();
                     break;
                 case applyRoom_what:
                     applyRoom(msg);
@@ -251,7 +265,10 @@ public class CenterActivity extends Activity implements View.OnClickListener {
             super.handleMessage(msg);
         }
 
-        private void showMessage() {
+        /**
+         *当有消息的时候显示消息按钮
+         */
+        private void showMessageButton() {
             List<ApplyJoinUser> applyJoinUsers = requestJoinUserService.getJoinUsers();
             int applyCount = applyJoinUsers.size();
             if (applyCount > 0) {
@@ -262,8 +279,7 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         }
 
         /**
-         * 当接收到创建聊天室线程返回信息后的操作
-         *
+         * 创建房间的操作
          * @param msg
          */
         private void createRoom(Message msg) {
@@ -282,29 +298,24 @@ public class CenterActivity extends Activity implements View.OnClickListener {
         }
 
         /**
-         * 当接收到申请聊天室线程返回信息后的操作
-         *
+         * 申请聊天室操作
          * @param msg
          */
         private void applyRoom(Message msg) {
             Bundle bata = msg.getData();
             //获得数据
             QueryMsg qm = (QueryMsg) bata.getSerializable(SubmitQueryMsgThread.RESPONSE_MSG);
-
             if ("0".equals(qm.getResult())) {
                 List<Map<String, Object>> returnMsg = qm.getDataTable();
                 Map<String, Object> returnMap = returnMsg.get(0);
                 String returnUserName = (String) returnMap.get("applyroomname");
                 String chatroomid = (String) returnMap.get("applyroomid");
-
                 centerProgressDialog.dismiss();
-                //TODO 这里缺少了聊天室的名字
                 chatroomService.saveChatRoom(new Chatroom(chatroomid, returnUserName, "0"));
                 requestJoinRoomService.saveJoinRoom(chatroomid);
             }
         }
     }
-
 
     /**
      * 当用户点击返回键直接跳转到手机界面，别关闭了

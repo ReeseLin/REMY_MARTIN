@@ -17,7 +17,7 @@ import lb.cn.so.bean.Chatroom;
  * Creater :ReeseLin
  * Email:172053362@qq.com
  * Date:2016/3/30
- * Des：对于Center界面的ListView的适配器
+ * Des：对于消息界面的ListView的适配器
  */
 public class ApplyJoinAdapter extends BaseAdapter {
     private List<ApplyJoinUser> ApplyJoinUsers;    //在绑定的数据

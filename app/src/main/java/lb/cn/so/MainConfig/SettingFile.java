@@ -8,7 +8,5 @@ package lb.cn.so.MainConfig;
  */
 public class SettingFile {
     //TODO 有时间应该学习下关于多个服务器的分布式，确保当一台死了，还有其他的可以确保正常运转
-    public static final String postUrl = "http://192.168.100.106:8080/so/MainController/Dispatch.action";
-
-
+    public static final String postUrl = "http://192.168.100.112:8080/so/MainController/Dispatch.action";
 }

@@ -17,7 +17,6 @@ public class PreferencesService {
 
     private Context context;
 
-
     public PreferencesService(Context context) {
         this.context = context;
     }
@@ -29,8 +28,6 @@ public class PreferencesService {
         editor.putString("id", id);
         editor.commit();
     }
-
-
 
     public Map<String, String> getPreferences() {
         Map<String, String> params = new HashMap<String, String>();

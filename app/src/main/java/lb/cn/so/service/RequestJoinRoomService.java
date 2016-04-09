@@ -25,12 +25,20 @@ public class RequestJoinRoomService {
         dbOpenHelper = new DBOpenHelper(context);
     }
 
+    /**
+     * 保存申请加入的聊天室
+     * @param requestRoomID
+     */
     public void saveJoinRoom(String requestRoomID) {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("insert into request_join_room(requestroomid) values(?)",
                 new Object[]{requestRoomID});
     }
 
+    /**
+     * 获取申请加入聊天室的ID列表
+     * @return
+     */
     public List<String> getRequestRoomID(){
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         List<String> rooms = new ArrayList<String>();
@@ -43,6 +51,10 @@ public class RequestJoinRoomService {
         return rooms;
     }
 
+    /**
+     * 删除申请加入的聊天室
+     * @param requestRoomID
+     */
     public void delete(String requestRoomID){
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.execSQL("delete from request_join_room where requestroomid=?", new Object[]{requestRoomID});

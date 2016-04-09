@@ -33,43 +33,38 @@ import lb.cn.so.bean.QueryMsg;
 import lb.cn.so.service.MessageService;
 
 /**
- * Created by Lin on 2016/3/31.
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/9
+ *  Des：聊天界面
  */
 public class ChatActivity extends Activity implements View.OnClickListener {
-
-    private TextView chatroomidTV;
-    private TextView chatroomnameTV;
-    private EditText sendMessageET;
-    private Button commitBut;
-    private ListView chatMessageListView;
 
     private String chatroomname;
     private String chatroomid;
 
+    //获取几个垃圾小控件
+    private TextView chatroomidTV;
+    private TextView chatroomnameTV;
+    private EditText sendMessageET;
+    private Button commitBut;
+
+    //聊天界面专属Handler
     private MyHandler myhandler;
 
+    //界面的listView几个参数
+    private ListView chatMessageListView;
     private ChatMessageAdapter chatMessageAdapter;
     private List<ChatroomMessage> messages = new ArrayList<ChatroomMessage>();
 
-    public static final int applyRoom_what = 7;
-
+    //Handler识别的what值
+    public static final int sendMessage_what = 7;
     public static final int chat_showTime_what = 8;
 
+    //定时任务，用于更新界面的ListView内容
     MyTimeTask myTimeTask;
 
-    private class MyTimeTask extends TimerTask {
-        Handler handler;
-
-        public MyTimeTask(Handler handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        public void run() {
-            handler.sendEmptyMessage(chat_showTime_what);
-        }
-    }
-
+    //获取聊天室消息的Service
     private MessageService messageService = new MessageService(this);
 
     @Override
@@ -85,10 +80,9 @@ public class ChatActivity extends Activity implements View.OnClickListener {
 
         myhandler = new MyHandler();
 
-        Intent intent = getIntent();//获取用于激活它的意图对象
-
+        //这步是获取从上一个Activity跳转过来后所携带的消息
+        Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-
         chatroomname = bundle.getString("chatroomname");
         chatroomid = bundle.getString("chatroomid");
 
@@ -105,19 +99,39 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         show();
     }
 
+    /**
+     * 刷新ListView调用的
+     */
     private void show() {
+        //TODO 有空的话要做一个查询数量的方法，不用每次都查询整个消息内容
         int chatroomidint = Integer.parseInt(chatroomid);
         messages = messageService.getScrollMessageData(chatroomidint,0,100);
         chatMessageAdapter.refresh(messages);
 
     }
 
-    //自定义handler，只是一个定时的功能去调用show()方法
+    /**
+     * 定时发送空消息去触发Handler执行刷新动作
+     */
+    private class MyTimeTask extends TimerTask {
+        Handler handler;
+        public MyTimeTask(Handler handler) {
+            this.handler = handler;
+        }
+        @Override
+        public void run() {
+            handler.sendEmptyMessage(chat_showTime_what);
+        }
+    }
+
+    /**
+     * 本页面的专属Handler
+     */
     private class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case applyRoom_what:
+                case sendMessage_what:
                     checkSendResult(msg);
                     show();
                     break;
@@ -128,6 +142,10 @@ public class ChatActivity extends Activity implements View.OnClickListener {
             super.handleMessage(msg);
         }
 
+        /**
+         *获取到发送消息的返回结果，如果成功记录到数据库中
+         * @param msg
+         */
         private void checkSendResult(Message msg) {
             Bundle bata = msg.getData();
             //获得数据
@@ -140,19 +158,15 @@ public class ChatActivity extends Activity implements View.OnClickListener {
                 String message = (String) dataMap.get("message");
                 String time = (String) dataMap.get("createtime");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
                 Date createtime = null;
                 try {
                     createtime = format.parse(time);
                 } catch (ParseException e) {
-                    Toast.makeText(ChatActivity.this, "解析日期出错", Toast.LENGTH_LONG);
+                    //TODO 如果可以需要想个办法做一个记录的类
                 }
-
                 ChatroomMessage cm = new ChatroomMessage(chatroomid,
                         message, MainUser.userid, createtime, MainUser.username, "1");
-
                 messageService.saveChatroomMessage(cm);
-
                 Toast.makeText(ChatActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
             }
         }
@@ -167,9 +181,12 @@ public class ChatActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    /**
+     * 发送消息
+     */
     private void sendMessage() {
         QueryMsg queryMsg = assembleQueryMsg();
-        SubmitQueryMsgThread submitQueryMsgThread = new SubmitQueryMsgThread(myhandler, SettingFile.postUrl, applyRoom_what);
+        SubmitQueryMsgThread submitQueryMsgThread = new SubmitQueryMsgThread(myhandler, SettingFile.postUrl, sendMessage_what);
         submitQueryMsgThread.addQueryMsg(queryMsg);
         ThreadPool.timeThreadPool.scheduleWithFixedDelay(submitQueryMsgThread, 0, 3, TimeUnit.SECONDS);
     }

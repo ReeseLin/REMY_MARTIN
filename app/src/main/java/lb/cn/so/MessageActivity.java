@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +33,23 @@ import lb.cn.so.service.RequestJoinUserService;
  */
 public class MessageActivity extends Activity {
 
+    //关于加入用户的数据库操作类
     private RequestJoinUserService requestJoinUserService = new RequestJoinUserService(this);
 
+    //界面ListView
     private ListView showMessageListView;
+    private ApplyJoinAdapter applyJoinAdapter;
+    List<ApplyJoinUser> applyJoinUsers =new ArrayList<>();
 
+    //弹窗显示Dialog
     private AlertDialog centerDialog;
 
+    //Handler使用的what值
     public static final int agreeUserJoin_what = 6;
 
     private MyHandler myHandler;
 
+    //等待的Dialog
     private ProgressDialog centerProgressDialog;
 
     @Override
@@ -50,16 +58,20 @@ public class MessageActivity extends Activity {
         setContentView(R.layout.activity_message);
         myHandler = new MyHandler();
         showMessageListView = (ListView) findViewById(R.id.showMessageListView);
-        List<ApplyJoinUser> applyJoinUsers = requestJoinUserService.getJoinUsers();
-        ApplyJoinAdapter applyJoinAdapter = new ApplyJoinAdapter(this, applyJoinUsers, R.layout.message_item);
+
+        //TODO 如果你觉得需要可以修改为动态刷新
+        applyJoinUsers = requestJoinUserService.getJoinUsers();
+        applyJoinAdapter = new ApplyJoinAdapter(this, applyJoinUsers, R.layout.message_item);
         showMessageListView.setOnItemClickListener(new ItemClickListener());
         showMessageListView.setAdapter(applyJoinAdapter);
     }
 
+    /**
+     * item点击事件
+     */
     private final class ItemClickListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             ListView lView = (ListView) parent;
-            /* 自定义适配器*/
             ApplyJoinUser applyJoinUser = (ApplyJoinUser) lView.getItemAtPosition(position);
             String showMsg = "允许：" + applyJoinUser.getRequestername() + "加入房间" + applyJoinUser.getRequestroomid() + "吗？";
             centerDialog = new AlertDialog.Builder(MessageActivity.this).setTitle(showMsg).
@@ -112,6 +124,10 @@ public class MessageActivity extends Activity {
             super.handleMessage(msg);
         }
 
+        /**
+         * 当获得请求加入聊天室成功结果后，删除本地的申请消息
+         * @param msg
+         */
         private void deleteApply(Message msg) {
             Bundle bata = msg.getData();
             //获得数据

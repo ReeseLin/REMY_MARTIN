@@ -1,5 +1,10 @@
 package lb.cn.so.bean;
-
+/**
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/9
+ *  Des：申请加入聊天室用户类
+ */
 public class ApplyJoinUser {
     private String requesterid;
     private String requestroomid;

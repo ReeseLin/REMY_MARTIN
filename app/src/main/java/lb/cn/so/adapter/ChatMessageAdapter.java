@@ -12,7 +12,12 @@ import java.util.List;
 import lb.cn.so.R;
 import lb.cn.so.bean.ApplyJoinUser;
 import lb.cn.so.bean.ChatroomMessage;
-
+/**
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/9
+ *  Des：用户聊天界面界面的ListView适配器
+ */
 public class ChatMessageAdapter extends BaseAdapter {
     private List<ChatroomMessage> messages;    //在绑定的数据
     private int resource;                //绑定的条目界面
@@ -64,7 +69,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         ChatroomMessage message = messages.get(position);
 
         //下面代码实现数据绑定
-        sendername.setText(message.getSendername());
+        sendername.setText(message.getSendername()+":");
         chatmessage.setText(message.getMessage());
 
         return convertView;

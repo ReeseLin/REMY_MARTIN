@@ -7,6 +7,8 @@ package lb.cn.so.MainConfig;
  *  Des：全局的一个用户类
  */
 public class MainUser {
+    //用户名
     public static String username;
+    //用户ID
     public static String userid;
 }

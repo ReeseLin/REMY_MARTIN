@@ -26,11 +26,12 @@ public class DatabaseContext extends ContextWrapper {
         //判断是否存在sd卡
         boolean sdExist = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
         if (!sdExist) {
+            //TODO 这里还需学习，如果用户的手机是没有SD卡的话，怎么办
             return null;
         } else {
             //获取sd卡路径
             String dbDir = Environment.getExternalStorageDirectory().getPath();
-            File file1 = new File(dbDir, "1ASO");
+            File file1 = new File(dbDir, "SO");
             File file = new File(file1, name);
             //判断目录是否存在，不存在则创建该目录
             if (!file1.exists()) {

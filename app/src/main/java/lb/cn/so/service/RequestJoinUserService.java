@@ -9,9 +9,13 @@ import java.util.List;
 
 import lb.cn.so.Utils.DBOpenHelper;
 import lb.cn.so.bean.ApplyJoinUser;
-
+/**
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/9
+ *  Des：记录想申请加入聊天室的用户
+ */
 public class RequestJoinUserService {
-
 
     private DBOpenHelper dbOpenHelper;
 
@@ -19,12 +23,20 @@ public class RequestJoinUserService {
         dbOpenHelper = new DBOpenHelper(context);
     }
 
+    /**
+     * 保存申请用户
+     * @param applyJoinUser
+     */
     public void saveJoinUser(ApplyJoinUser applyJoinUser) {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("insert into request_join_user(requesterid,requestroomid,requestername) values(?,?,?)",
                 new Object[]{applyJoinUser.getRequesterid(), applyJoinUser.getRequestroomid(),applyJoinUser.getRequestername()});
     }
 
+    /**
+     * 获取申请加入聊天室用户列表
+     * @return
+     */
     public List<ApplyJoinUser> getJoinUsers() {
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         List<ApplyJoinUser> ApplyJoinUsers = new ArrayList<ApplyJoinUser>();
@@ -40,6 +52,11 @@ public class RequestJoinUserService {
         return ApplyJoinUsers;
     }
 
+    /**
+     * 查询改用户是否已经保存到申请加入聊天室列表，放置重复录入
+     * @param applyJoinUser
+     * @return
+     */
     public Boolean isAlreadyApply(ApplyJoinUser applyJoinUser) {
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         List<ApplyJoinUser> ApplyJoinUsers = new ArrayList<ApplyJoinUser>();
@@ -54,6 +71,10 @@ public class RequestJoinUserService {
         return true;
     }
 
+    /**
+     * 删除申请用户
+     * @param applyJoinUser
+     */
     public void delete(ApplyJoinUser applyJoinUser) {
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.execSQL("delete from request_join_user where requesterid=? and requestroomid =?",

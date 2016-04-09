@@ -25,7 +25,10 @@ public class ChatroomService {
         dbOpenHelper = new DBOpenHelper(context);
     }
 
-    //添加聊天室
+    /**
+     * 保存聊天室
+     * @param chatroom
+     */
     public void saveChatRoom(Chatroom chatroom) {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("insert into chat_room(chatroomid, chatroomname, isagree) values(?,?,?)",
@@ -34,8 +37,7 @@ public class ChatroomService {
 
     /**
      * 查询聊天室的数量
-     *
-     * @return
+     * @return 聊天室数量
      */
     public Long getChatRoomCount() {
         SQLiteDatabase sqLiteDatabase = dbOpenHelper.getWritableDatabase();
@@ -45,8 +47,6 @@ public class ChatroomService {
         cursor.close();
         return result;
     }
-
-    //查询聊天室
 
     /**
      * 分页获取记录
@@ -71,7 +71,10 @@ public class ChatroomService {
         return chatrooms;
     }
 
-
+    /**
+     * 把IsAgree位置为1，如果在请求查询的时候知道被允许加入聊天室时操作
+     * @param chatroomid
+     */
     public void updateIsAgree(String chatroomid){
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.execSQL("update chat_room set isagree = 1 where chatroomid=?",

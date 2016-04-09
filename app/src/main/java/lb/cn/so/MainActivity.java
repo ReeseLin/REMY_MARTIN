@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
             ThreadPool.timeThreadPool.scheduleWithFixedDelay(submitQueryMsgThread, 0, 3, TimeUnit.SECONDS);
             //等待画面
             mProgressDialog = ProgressDialog.show(MainActivity.this, null, "正在登录......", true);
-
         }
 
         /**

@@ -70,8 +70,8 @@ public class HttpUtils {
 
     /**
      * 把封装好的请求对象Post到指定的Url中，并返回String数据
-     * @param url
-     * @param queryMsg
+     * @param url 请求的URL
+     * @param queryMsg 请求的类
      * @return
      * @throws Exception
      */
@@ -109,7 +109,7 @@ public class HttpUtils {
 
     /**
      * 把封装好的请求数据post到指定的Url，并接收数据组合成一个对象返回
-     * 涉及到的知识点重要的是，对于xml文件的解析方法
+     * TODO 涉及到的知识点重要的是，对于xml文件的解析方法
      * @param url
      * @param queryMsg
      * @return
@@ -139,8 +139,13 @@ public class HttpUtils {
         return responseQM;
     }
 
+    /**
+     * 专属解析SO项目服务器器返回XML的方法，获得一个QueryMsg
+     * @param in
+     * @return
+     * @throws Exception
+     */
     private static QueryMsg getResponseQueryMsg(InputStream in) throws Exception {
-
         QueryMsg queryMsg = null;
         Map<String, Object> map = null;
 
@@ -181,6 +186,7 @@ public class HttpUtils {
 
 
     private static void wirteQueryMsg(QueryMsg queryMsg, OutputStream out) throws Exception {
+        //TODO 这里是一个学习XML的点，不太清楚这是什么
         XmlSerializer serializer = Xml.newSerializer();
         serializer.setOutput(out, "UTF-8");
         serializer.startDocument("UTF-8", true);

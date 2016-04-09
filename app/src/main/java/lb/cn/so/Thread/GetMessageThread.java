@@ -14,9 +14,13 @@ import lb.cn.so.Utils.HttpUtils;
 import lb.cn.so.bean.ChatroomMessage;
 import lb.cn.so.bean.QueryMsg;
 import lb.cn.so.service.MessageService;
-
+/**
+ *  Creater :ReeseLin
+ *  Email:172053362@qq.com
+ *  Date:2016/4/9
+ *  Des：获取用户被允许加入的聊天室的消息
+ */
 public class GetMessageThread implements Runnable {
-
 
     private MessageService messageService;
 
@@ -33,9 +37,14 @@ public class GetMessageThread implements Runnable {
         }
     }
 
+    /**
+     * 获取消息，用非本用户最后一次时间为界限获取
+     * @throws Exception
+     */
     private void getMessage() throws Exception {
         String lasttime = messageService.getLastTimeString();
         if(lasttime==null){
+            //软件第一次执行成功的时间，有些意义
             lasttime="2016-04-09 15:15:15";
         }
         QueryMsg queryMsg = new QueryMsg();
@@ -62,24 +71,4 @@ public class GetMessageThread implements Runnable {
             }
         }
     }
-
-
-//    private void check(List<String> chatrooms) throws Exception {
-//        for (String chatroomid : chatrooms) {
-//            QueryMsg queryMsg = new QueryMsg();
-//            queryMsg.setMethodName("CheckBeAgree");
-//            queryMsg.iniDateTable();
-//            Map<String, Object> map = new HashMap<String, Object>();
-//            map.put("userid", MainUser.userid);
-//            map.put("chatroomid", chatroomid);
-//            queryMsg.getDataTable().add(map);
-//            QueryMsg qm = HttpUtils.postQueryMsgAndGetQueryMsg(SettingFile.postUrl, queryMsg);
-//            Map<String, Object> datatable  = qm.getDataTable().get(0);
-//            String look  = (String)datatable.get("isagree");
-//            if("1".equals(datatable.get("isagree"))){
-//                requestJoinRoomService.delete(chatroomid);
-//                chatroomService.updateIsAgree(chatroomid);
-//            }
-//        }
-//    }
 }

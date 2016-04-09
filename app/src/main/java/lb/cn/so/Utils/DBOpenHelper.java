@@ -21,8 +21,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //db.execSQL("CREATE TABLE chat_room (id integer NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,chatroomid integer NOT NULL UNIQUE,chatroomname varchar DEFAULT 聊天室,isagree varchar NOT NULL DEFAULT 0)");
-        //db.execSQL("CREATE TABLE chat_room_message (id integer NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,chatroomid integer NOT NULL,message text,createtime date,sender varchar,senderid integer,isread varchar DEFAULT 0)");
         db.execSQL("CREATE TABLE chat_room (id integer PRIMARY KEY AUTOINCREMENT,chatroomid integer,chatroomname varchar DEFAULT 聊天室,isagree varchar DEFAULT 0,hasMessage integer DEFAULT 0)");
         db.execSQL("CREATE TABLE chat_room_message (id integer NOT NULL PRIMARY KEY AUTOINCREMENT,chatroomid integer NOT NULL,message text,createtime date,sendername varchar,senderid integer,isread varchar DEFAULT 0)");
         db.execSQL("CREATE TABLE request_join_room (requestroomid integer)");
